@@ -1,15 +1,35 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Modal from "./components/Modal";
 import { PriorityToString, Status, StatusToString, Todo } from "./todo";
 import ReactLogo from "./assets/react.svg";
 
 function App() {
   const [showModal, setShowModal] = useState(false);
-  const [tasks, setTasks] = useState<Todo[]>([]);
+  const [tasks, setTasks] = useState<Todo[]>(() => {
+    const stored = localStorage.getItem("tasks");
+    if (stored === null) return [];
+
+    try {
+      const parsed = JSON.parse(stored);
+      return parsed.map((task: any) => ({
+        ...task,
+        status: Number(task.status),
+        priority: Number(task.priority),
+        dueDate: task.dueDate ? new Date(task.dueDate) : undefined,
+      }));
+    } catch (e) {
+      console.error("Failed to parse tasks:", e);
+      return [];
+    }
+  });
 
   function addTask(task: Todo) {
     setTasks((prev) => [...prev, task]);
   }
+
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
 
   const removeTaskById = (id: string) => {
     setTasks((prev) => prev.filter((task) => task.id !== id));
