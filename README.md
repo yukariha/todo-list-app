@@ -13,4 +13,4 @@ Seems like an appropriate tech stack for a todo list app for sure.
 
 - [x] Responsive user interface
 - [x] Modular design
-- [ ] Persistent storage
+- [x] Persistent storage
